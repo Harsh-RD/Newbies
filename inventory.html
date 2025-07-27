@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustCart - Vendor Inventory</title>
+    <meta name="description" content="Vendor Inventory Management - Track your stock and manage supplies">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>">
+</head>
+<body class="bg-green-50 min-h-screen">
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50 border-b border-green-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="text-2xl">🛒</div>
+                    <span class="text-xl font-bold text-green-800">TrustCart</span>
+                    <span class="text-sm text-green-600 bg-green-100 px-2 py-1 rounded">Vendor</span>
+                </div>
+                
+                <!-- User Info -->
+                <div class="flex items-center space-x-4">
+                    <div class="text-sm text-green-700">
+                        <i class="fas fa-user mr-1"></i>
+                        <span id="userEmail">Loading...</span>
+                    </div>
+                    <button onclick="logout()" class="text-green-600 hover:text-green-800 text-sm">
+                        <i class="fas fa-sign-out-alt mr-1"></i>
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 section">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-green-800 mb-2">Inventory Management</h1>
+            <p class="text-green-600">Track your stock levels and manage your supplies efficiently</p>
+        </div>
+
+        <!-- Analytics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="card">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-green-100 text-green-600">
+                        <i class="fas fa-boxes text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-green-600">Total Items</p>
+                        <p class="text-2xl font-bold text-green-800" id="totalItems">0</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                        <i class="fas fa-dollar-sign text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-green-600">Total Value</p>
+                        <p class="text-2xl font-bold text-green-800" id="totalValue">₹0</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                        <i class="fas fa-exclamation-triangle text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-green-600">Low Stock</p>
+                        <p class="text-2xl font-bold text-green-800" id="lowStockItems">0</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-red-100 text-red-600">
+                        <i class="fas fa-times-circle text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-green-600">Out of Stock</p>
+                        <p class="text-2xl font-bold text-green-800" id="outOfStockItems">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Item Form -->
+        <div class="card mb-8">
+            <h2 class="text-xl font-semibold text-green-800 mb-4">Add New Item</h2>
+            <form id="addItemForm" class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <div>
+                    <label for="itemName" class="block text-sm font-medium text-green-800 mb-2">Item Name</label>
+                    <input type="text" id="itemName" name="itemName" required 
+                           class="form-input" 
+                           placeholder="Enter item name">
+                </div>
+                
+                <div>
+                    <label for="itemCategory" class="block text-sm font-medium text-green-800 mb-2">Category</label>
+                    <select id="itemCategory" name="itemCategory" required class="form-input">
+                        <option value="">Select category</option>
+                        <option value="Vegetables">Vegetables</option>
+                        <option value="Fruits">Fruits</option>
+                        <option value="Meat">Meat</option>
+                        <option value="Dairy">Dairy</option>
+                        <option value="Grains">Grains</option>
+                        <option value="Spices">Spices</option>
+                        <option value="Essentials">Essentials</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="itemQuantity" class="block text-sm font-medium text-green-800 mb-2">Quantity</label>
+                    <input type="number" id="itemQuantity" name="itemQuantity" required 
+                           class="form-input" 
+                           placeholder="0" min="0">
+                </div>
+                
+                <div>
+                    <label for="itemUnit" class="block text-sm font-medium text-green-800 mb-2">Unit</label>
+                    <select id="itemUnit" name="itemUnit" required class="form-input">
+                        <option value="">Select unit</option>
+                        <option value="kg">Kilograms (kg)</option>
+                        <option value="g">Grams (g)</option>
+                        <option value="l">Liters (l)</option>
+                        <option value="ml">Milliliters (ml)</option>
+                        <option value="pieces">Pieces</option>
+                        <option value="packets">Packets</option>
+                    </select>
+                </div>
+                
+                <div class="flex items-end">
+                    <button type="submit" 
+                            class="btn-primary w-full">
+                        <i class="fas fa-plus mr-2"></i>
+                        Add Item
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Inventory Table -->
+        <div class="card overflow-hidden">
+            <div class="px-6 py-4 border-b border-green-200">
+                <h2 class="text-xl font-semibold text-green-800">Current Inventory</h2>
+                <p class="text-sm text-green-600 mt-1">Manage your stock levels and track inventory</p>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-green-200">
+                    <thead class="bg-green-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-green-800 uppercase tracking-wider">Item</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-green-800 uppercase tracking-wider">Category</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-green-800 uppercase tracking-wider">Quantity</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-green-800 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-green-800 uppercase tracking-wider">Last Updated</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-green-800 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-green-200" id="inventoryTableBody">
+                        <!-- Table rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="card">
+                <h3 class="text-lg font-semibold text-green-800 mb-4">Quick Actions</h3>
+                <div class="space-y-3">
+                    <button onclick="exportInventory()" class="btn-primary w-full">
+                        <i class="fas fa-download mr-2"></i>
+                        Export Inventory
+                    </button>
+                    <button onclick="importInventory()" class="btn-secondary w-full">
+                        <i class="fas fa-upload mr-2"></i>
+                        Import Inventory
+                    </button>
+                    <button onclick="clearInventory()" class="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl font-semibold transition-colors">
+                        <i class="fas fa-trash mr-2"></i>
+                        Clear All
+                    </button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="text-lg font-semibold text-green-800 mb-4">Recent Activity</h3>
+                <div class="space-y-3 text-sm" id="recentActivity">
+                    <div class="text-green-600">No recent activity</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="text-lg font-semibold text-green-800 mb-4">Navigation</h3>
+                <div class="space-y-3">
+                    <a href="index.html" class="block w-full bg-green-100 hover:bg-green-200 text-green-800 px-4 py-2 rounded-lg font-semibold transition-colors text-center">
+                        <i class="fas fa-home mr-2"></i>
+                        Back to Home
+                    </a>
+                    <a href="login.html" class="block w-full bg-green-100 hover:bg-green-200 text-green-800 px-4 py-2 rounded-lg font-semibold transition-colors text-center">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        Switch Account
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let inventory = [];
+        let recentActivity = [];
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            const userRole = localStorage.getItem('trustcart_userRole');
+            const userEmail = localStorage.getItem('trustcart_userEmail');
+            
+            if (!userRole || userRole !== 'vendor' || !userEmail) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Display user email
+            document.getElementById('userEmail').textContent = userEmail;
+            
+            // Load inventory
+            loadInventory();
+            renderInventoryTable();
+            updateStats();
+            
+            // Setup form submission
+            document.getElementById('addItemForm').addEventListener('submit', addInventoryItem);
+        });
+
+        // Load inventory from localStorage
+        function loadInventory() {
+            const savedInventory = localStorage.getItem('trustcart_vendor_inventory');
+            if (savedInventory) {
+                inventory = JSON.parse(savedInventory);
+            }
+        }
+
+        // Save inventory to localStorage
+        function saveInventory() {
+            localStorage.setItem('trustcart_vendor_inventory', JSON.stringify(inventory));
+        }
+
+        // Add new inventory item
+        function addInventoryItem(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const newItem = {
+                id: Date.now(),
+                name: formData.get('itemName'),
+                category: formData.get('itemCategory'),
+                quantity: parseFloat(formData.get('itemQuantity')) || 0,
+                unit: formData.get('itemUnit'),
+                lastUpdated: new Date().toISOString()
+            };
+            
+            inventory.push(newItem);
+            saveInventory();
+            renderInventoryTable();
+            updateStats();
+            
+            // Add to recent activity
+            addActivity(`Added ${newItem.name} (${newItem.quantity} ${newItem.unit})`);
+            
+            // Reset form
+            e.target.reset();
+            
+            showToast('success', 'Item added successfully!');
+        }
+
+        // Render inventory table
+        function renderInventoryTable() {
+            const tbody = document.getElementById('inventoryTableBody');
+            tbody.innerHTML = '';
+            
+            if (inventory.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="px-6 py-8 text-center text-green-600">
+                            <i class="fas fa-box-open text-4xl mb-4"></i>
+                            <p>No items in inventory yet. Add your first item above!</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            inventory.forEach(item => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-green-50';
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="text-sm font-medium text-green-900">${item.name}</div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            ${item.category}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center space-x-2">
+                            <input type="number" 
+                                   value="${item.quantity}" 
+                                   min="0"
+                                   class="w-20 px-2 py-1 border border-green-300 rounded text-sm text-green-900 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                   onchange="updateQuantity(${item.id}, this.value)">
+                            <span class="text-sm text-green-600">${item.unit}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStockStatusClass(item.quantity)}">
+                            ${getStockStatusText(item.quantity)}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">
+                        ${formatDate(item.lastUpdated)}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="saveItem(${item.id})" class="text-green-600 hover:text-green-900 mr-3">
+                            <i class="fas fa-save"></i> Save
+                        </button>
+                        <button onclick="deleteItem(${item.id})" class="text-red-600 hover:text-red-900">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update item quantity
+        function updateQuantity(id, quantity) {
+            const item = inventory.find(item => item.id === id);
+            if (item) {
+                const oldQuantity = item.quantity;
+                item.quantity = parseFloat(quantity) || 0;
+                item.lastUpdated = new Date().toISOString();
+                
+                // Add to recent activity
+                addActivity(`Updated ${item.name} quantity from ${oldQuantity} to ${item.quantity} ${item.unit}`);
+            }
+        }
+
+        // Save item changes
+        function saveItem(id) {
+            const item = inventory.find(item => item.id === id);
+            if (item) {
+                item.lastUpdated = new Date().toISOString();
+                saveInventory();
+                updateStats();
+                showToast('success', 'Item updated successfully!');
+            }
+        }
+
+        // Delete item
+        function deleteItem(id) {
+            const item = inventory.find(item => item.id === id);
+            if (item && confirm(`Are you sure you want to delete ${item.name}?`)) {
+                inventory = inventory.filter(item => item.id !== id);
+                saveInventory();
+                renderInventoryTable();
+                updateStats();
+                addActivity(`Deleted ${item.name} from inventory`);
+                showToast('success', 'Item deleted successfully!');
+            }
+        }
+
+        // Get stock status class
+        function getStockStatusClass(quantity) {
+            if (quantity > 10) return 'bg-green-100 text-green-800';
+            if (quantity > 0) return 'bg-yellow-100 text-yellow-800';
+            return 'bg-red-100 text-red-800';
+        }
+
+        // Get stock status text
+        function getStockStatusText(quantity) {
+            if (quantity > 10) return 'In Stock';
+            if (quantity > 0) return 'Low Stock';
+            return 'Out of Stock';
+        }
+
+        // Update statistics
+        function updateStats() {
+            const totalItems = inventory.length;
+            const lowStockItems = inventory.filter(item => item.quantity <= 5 && item.quantity > 0).length;
+            const outOfStockItems = inventory.filter(item => item.quantity === 0).length;
+            
+            document.getElementById('totalItems').textContent = totalItems;
+            document.getElementById('lowStockItems').textContent = lowStockItems;
+            document.getElementById('outOfStockItems').textContent = outOfStockItems;
+            document.getElementById('totalValue').textContent = `${totalItems} items`;
+        }
+
+        // Add activity to recent activity
+        function addActivity(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            recentActivity.unshift({ message, timestamp });
+            
+            // Keep only last 5 activities
+            if (recentActivity.length > 5) {
+                recentActivity = recentActivity.slice(0, 5);
+            }
+            
+            renderRecentActivity();
+        }
+
+        // Render recent activity
+        function renderRecentActivity() {
+            const container = document.getElementById('recentActivity');
+            
+            if (recentActivity.length === 0) {
+                container.innerHTML = '<div class="text-green-600">No recent activity</div>';
+                return;
+            }
+            
+            container.innerHTML = recentActivity.map(activity => `
+                <div class="flex justify-between items-start">
+                    <div class="text-green-800 text-xs">${activity.message}</div>
+                    <div class="text-green-500 text-xs">${activity.timestamp}</div>
+                </div>
+            `).join('');
+        }
+
+        // Export inventory
+        function exportInventory() {
+            const dataStr = JSON.stringify(inventory, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'trustcart-vendor-inventory.json';
+            link.click();
+            URL.revokeObjectURL(url);
+            
+            addActivity('Exported inventory data');
+            showToast('success', 'Inventory exported successfully!');
+        }
+
+        // Import inventory
+        function importInventory() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const importedInventory = JSON.parse(e.target.result);
+                            inventory = importedInventory;
+                            saveInventory();
+                            renderInventoryTable();
+                            updateStats();
+                            addActivity('Imported inventory data');
+                            showToast('success', 'Inventory imported successfully!');
+                        } catch (error) {
+                            showToast('error', 'Invalid file format');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+
+        // Clear all inventory
+        function clearInventory() {
+            if (confirm('Are you sure you want to clear all inventory items?')) {
+                inventory = [];
+                saveInventory();
+                renderInventoryTable();
+                updateStats();
+                addActivity('Cleared all inventory items');
+                showToast('success', 'Inventory cleared successfully!');
+            }
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('trustcart_userRole');
+            localStorage.removeItem('trustcart_userEmail');
+            localStorage.removeItem('trustcart_userLoginTime');
+            window.location.href = 'login.html';
+        }
+
+        // Toast notification function
+        function showToast(type, message) {
+            const toast = document.createElement('div');
+            toast.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 max-w-sm ${
+                type === 'success' ? 'bg-green-500 text-white' : 
+                type === 'error' ? 'bg-red-500 text-white' : 
+                'bg-blue-500 text-white'
+            }`;
+            
+            toast.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html> 

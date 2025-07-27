@@ -1,0 +1,38 @@
+{
+  "name": "trustcart",
+  "version": "1.0.0",
+  "description": "A beautiful, modern web application for street food vendors to manage inventory and connect with suppliers",
+  "main": "index.html",
+  "scripts": {
+    "start": "http-server -p 8000 -o",
+    "dev": "http-server -p 8000 -o -c-1",
+    "build": "echo 'No build process needed - static files only'",
+    "deploy": "echo 'Deploy to your preferred platform'"
+  },
+  "keywords": [
+    "street-food",
+    "inventory-management",
+    "supplier-marketplace",
+    "vendor-management",
+    "web-app",
+    "responsive-design",
+    "dark-mode",
+    "multilingual"
+  ],
+  "author": "TrustCart Team",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/trustcart.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/trustcart/issues"
+  },
+  "homepage": "https://yourusername.github.io/trustcart"
+} 
